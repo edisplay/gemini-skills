@@ -69,147 +69,138 @@ To streamline real-time audio/video app development, use a third-party integrati
 
 ### Authentication
 
-* {Python}
+#### Python
 
-    ```python
-    from google import genai
+```python
+from google import genai
 
-    client = genai.Client(api_key="YOUR_API_KEY")
-    ```
+client = genai.Client(api_key="YOUR_API_KEY")
+```
 
-* {JavaScript}
+#### JavaScript
 
-    ```js
-    import { GoogleGenAI } from '@google/genai';
+```js
+import { GoogleGenAI } from '@google/genai';
 
-    const ai = new GoogleGenAI({ apiKey: 'YOUR_API_KEY' });
-    ```
+const ai = new GoogleGenAI({ apiKey: 'YOUR_API_KEY' });
+```
 
 ### Connecting to the Live API
 
-* {Python}
+#### Python
+```python
+from google.genai import types
 
-    ```python
-    from google.genai import types
-
-    config = types.LiveConnectConfig(
-        response_modalities=[types.Modality.AUDIO],
-        system_instruction=types.Content(
-            parts=[types.Part(text="You are a helpful assistant.")]
-        )
+config = types.LiveConnectConfig(
+    response_modalities=[types.Modality.AUDIO],
+    system_instruction=types.Content(
+        parts=[types.Part(text="You are a helpful assistant.")]
     )
-    
-    async with client.aio.live.connect(model="gemini-2.5-flash-native-audio-preview-12-2025", config=config) as session:
-        pass  # Session is now active
-    ```
+)
 
-* {JavaScript}
+async with client.aio.live.connect(model="gemini-2.5-flash-native-audio-preview-12-2025", config=config) as session:
+    pass  # Session is now active
+```
 
-    ```js
-    const session = await ai.live.connect({
-      model: 'gemini-2.5-flash-native-audio-preview-12-2025',
-      config: {
-        responseModalities: ['audio'],
-        systemInstruction: { parts: [{ text: 'You are a helpful assistant.' }] }
-      },
-      callbacks: {
-        onopen: () => console.log('Connected'),
-        onmessage: (response) => console.log('Message:', response),
-        onerror: (error) => console.error('Error:', error),
-        onclose: () => console.log('Closed')
-      }
-    });
-    ```
+#### JavaScript
+```js
+const session = await ai.live.connect({
+  model: 'gemini-2.5-flash-native-audio-preview-12-2025',
+  config: {
+    responseModalities: ['audio'],
+    systemInstruction: { parts: [{ text: 'You are a helpful assistant.' }] }
+  },
+  callbacks: {
+    onopen: () => console.log('Connected'),
+    onmessage: (response) => console.log('Message:', response),
+    onerror: (error) => console.error('Error:', error),
+    onclose: () => console.log('Closed')
+  }
+});
+```
 
 ### Sending Text
 
-* {Python}
+#### Python
+```python
+await session.send_realtime_input(text="Hello, how are you?")
+```
 
-    ```python
-    await session.send_realtime_input(text="Hello, how are you?")
-    ```
-
-* {JavaScript}
-
-    ```js
-    session.sendRealtimeInput({ text: 'Hello, how are you?' });
-    ```
+#### JavaScript
+```js
+session.sendRealtimeInput({ text: 'Hello, how are you?' });
+```
 
 ### Sending Audio
 
-* {Python}
+#### Python
+```python
+await session.send_realtime_input(
+    audio=types.Blob(data=chunk, mime_type="audio/pcm;rate=16000")
+)
+```
 
-    ```python
-    await session.send_realtime_input(
-        audio=types.Blob(data=chunk, mime_type="audio/pcm;rate=16000")
-    )
-    ```
-
-* {JavaScript}
-
-    ```js
-    session.sendRealtimeInput({
-      audio: { data: chunk.toString('base64'), mimeType: 'audio/pcm;rate=16000' }
-    });
-    ```
+#### JavaScript
+```js
+session.sendRealtimeInput({
+  audio: { data: chunk.toString('base64'), mimeType: 'audio/pcm;rate=16000' }
+});
+```
 
 ### Sending Video
 
-* {Python}
+#### Python
+```python
+# frame: raw JPEG-encoded bytes
+await session.send_realtime_input(
+    video=types.Blob(data=frame, mime_type="image/jpeg")
+)
+```
 
-    ```python
-    await session.send_realtime_input(
-        video=types.Blob(data=frame, mime_type="image/jpeg")
-    )
-    ```
-
-* {JavaScript}
-
-    ```js
-    session.sendRealtimeInput({
-      video: { data: frame.toString('base64'), mimeType: 'image/jpeg' }
-    });
-    ```
+#### JavaScript
+```js
+session.sendRealtimeInput({
+  video: { data: frame.toString('base64'), mimeType: 'image/jpeg' }
+});
+```
 
 ### Receiving Audio and Text
 
-* {Python}
+#### Python
+```python
+async for response in session.receive():
+    content = response.server_content
+    if content:
+        # Audio
+        if content.model_turn:
+            for part in content.model_turn.parts:
+                if part.inline_data:
+                    audio_data = part.inline_data.data
+        # Transcription
+        if content.input_transcription:
+            print(f"User: {content.input_transcription.text}")
+        if content.output_transcription:
+            print(f"Gemini: {content.output_transcription.text}")
+        # Interruption
+        if content.interrupted is True:
+            pass  # Stop playback, clear audio queue
+```
 
-    ```python
-    async for response in session.receive():
-        content = response.server_content
-        if content:
-            # Audio
-            if content.model_turn:
-                for part in content.model_turn.parts:
-                    if part.inline_data:
-                        audio_data = part.inline_data.data
-            # Transcription
-            if content.input_transcription:
-                print(f"User: {content.input_transcription.text}")
-            if content.output_transcription:
-                print(f"Gemini: {content.output_transcription.text}")
-            # Interruption
-            if content.interrupted is True:
-                pass  # Stop playback, clear audio queue
-    ```
-
-* {JavaScript}
-
-    ```js
-    // Inside the onmessage callback
-    const content = response.serverContent;
-    if (content?.modelTurn?.parts) {
-      for (const part of content.modelTurn.parts) {
-        if (part.inlineData) {
-          const audioData = part.inlineData.data; // Base64 encoded
-        }
-      }
+#### JavaScript
+```js
+// Inside the onmessage callback
+const content = response.serverContent;
+if (content?.modelTurn?.parts) {
+  for (const part of content.modelTurn.parts) {
+    if (part.inlineData) {
+      const audioData = part.inlineData.data; // Base64 encoded
     }
-    if (content?.inputTranscription) console.log('User:', content.inputTranscription.text);
-    if (content?.outputTranscription) console.log('Gemini:', content.outputTranscription.text);
-    if (content?.interrupted) { /* Stop playback, clear audio queue */ }
-    ```
+  }
+}
+if (content?.inputTranscription) console.log('User:', content.inputTranscription.text);
+if (content?.outputTranscription) console.log('Gemini:', content.outputTranscription.text);
+if (content?.interrupted) { /* Stop playback, clear audio queue */ }
+```
 
 ---
 
@@ -255,7 +246,6 @@ This index contains links to all documentation pages in `.md.txt` format. Use we
 - [Session Management](https://ai.google.dev/gemini-api/docs/live-session.md.txt) — context window compression, session resumption, GoAway signals
 - [Ephemeral Tokens](https://ai.google.dev/gemini-api/docs/ephemeral-tokens.md.txt) — secure client-side authentication for browser/mobile
 - [WebSockets API Reference](https://ai.google.dev/api/live.md.txt) — raw WebSocket protocol details
-- [REST API Discovery Spec (v1beta)](https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta)
 
 ## Supported Languages
 
