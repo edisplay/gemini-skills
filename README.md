@@ -79,6 +79,17 @@ npx skills add google-gemini/gemini-skills --skill gemini-live-api-dev --global
 npx ctx7 skills install /google-gemini/gemini-skills gemini-live-api-dev
 ```
 
+### gemini-interactions-api
+
+Skill for building apps with the Gemini Interactions API. Covers text generation, multi-turn chat, streaming, function calling, structured output, image generation, Deep Research agents, deprecated model guardrails, and both Python and TypeScript SDKs.
+
+```bash
+# Vercel skills
+npx skills add google-gemini/gemini-skills --skill gemini-interactions-api --global
+# Context7 skills
+npx ctx7 skills install /google-gemini/gemini-skills gemini-interactions-api
+```
+
 ## Disclaimer
 
 This is not an officially supported Google product. This project is not
