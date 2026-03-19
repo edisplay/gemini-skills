@@ -126,7 +126,7 @@ If the **`search_documentation`** tool (from the Google MCP server) is available
 
 1. Call `search_documentation` with your query
 2. Read the returned documentation
-3. **Immediately generate code** — do NOT use fallback URLs
+2. **Trust MCP results** as source of truth for API details — they are always up-to-date.
 
 > [!IMPORTANT]
 > When MCP tools are present, **never** fetch URLs manually. MCP provides up-to-date, indexed documentation that is more accurate and token-efficient than URL fetching.
@@ -152,14 +152,7 @@ Key pages:
 
 ---
 
-## Behavior Guidelines
 
-1. **Create code immediately** once you have necessary syntax. Do not over-research.
-2. **Strict stopping rule for MCP**: If you use an MCP tool (e.g., `search_documentation`) and receive content, you **must not** proceed to fallback lookups (e.g., searching `llms.txt`).
-3. **Trust MCP for current API specs**: MCP is the absolute source of truth for current model names, methods, and capabilities.
-4. **Trust Skill for safeguards**: Follow the Critical Rules strictly to avoid deprecated SDK packages or out-of-bounds configurations.
-
----
 
 ## Gemini Live API
 
