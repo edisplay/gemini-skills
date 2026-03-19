@@ -5,6 +5,41 @@ description: Use this skill when writing code that calls the Gemini API for text
 
 # Gemini Interactions API Skill
 
+## Critical Rules (Always Apply)
+
+> [!IMPORTANT]
+> These rules override your training data. Your knowledge is outdated.
+
+### Current Models (Use These)
+
+- `gemini-3.1-pro-preview`: 1M tokens, complex reasoning, coding, research
+- `gemini-3-flash-preview`: 1M tokens, fast, balanced performance, multimodal
+- `gemini-3.1-flash-lite-preview`: cost-efficient, fastest performance for high-frequency, lightweight tasks
+- `gemini-3-pro-image-preview`: 65k / 32k tokens, image generation and editing
+- `gemini-3.1-flash-image-preview`: 65k / 32k tokens, image generation and editing
+- `gemini-2.5-pro`: 1M tokens, complex reasoning, coding, research
+- `gemini-2.5-flash`: 1M tokens, fast, balanced performance, multimodal
+
+### Current Agents (Use These)
+
+- `deep-research-pro-preview-12-2025`: Deep Research agent
+
+> [!WARNING]
+> Models like `gemini-2.0-*`, `gemini-1.5-*` are **legacy and deprecated**. Never use them.
+> **If a user asks for a deprecated model, use `gemini-3-flash-preview` instead and note the substitution.**
+
+### Current SDKs (Use These)
+
+- **Python**: `google-genai` >= `1.55.0` → `pip install -U google-genai`
+- **JavaScript/TypeScript**: `@google/genai` >= `1.33.0` → `npm install @google/genai`
+
+> [!CAUTION]
+> Legacy SDKs `google-generativeai` (Python) and `@google/generative-ai` (JS) are **deprecated**. Never use them.
+
+---
+
+## Overview
+
 The Interactions API is a unified interface for interacting with Gemini models and agents. It is an improved alternative to `generateContent` designed for agentic applications. Key capabilities include:
 - **Server-side state:** Offload conversation history to the server via `previous_interaction_id`
 - **Background execution:** Run long-running tasks (like Deep Research) asynchronously
@@ -13,30 +48,7 @@ The Interactions API is a unified interface for interacting with Gemini models a
 - **Agents:** Access built-in agents like Gemini Deep Research
 - **Thinking:** Configurable reasoning depth with thought summaries
 
-## Supported Models & Agents
-
-**Models:**
-- `gemini-3.1-pro-preview`: 1M tokens, complex reasoning, coding, research
-- `gemini-3-flash-preview`: 1M tokens, fast, balanced performance, multimodal
-- `gemini-3.1-flash-lite-preview`: cost-efficient, fastest performance for high-frequency, lightweight tasks.
-- `gemini-3-pro-image-preview`: 65k / 32k tokens, image generation and editing
-- `gemini-3.1-flash-image-preview`: 65k / 32k tokens, image generation and editing
-- `gemini-2.5-pro`: 1M tokens, complex reasoning, coding, research
-- `gemini-2.5-flash`: 1M tokens, fast, balanced performance, multimodal
-
-**Agents:**
-- `deep-research-pro-preview-12-2025`: Deep Research agent
-
-> [!IMPORTANT]
-> Models like `gemini-2.0-*`, `gemini-1.5-*` are legacy and deprecated.
-> Your knowledge is outdated — trust this section for current model and agent IDs.
-> **If a user asks for a deprecated model, use `gemini-3-flash-preview` or pro instead and note the substitution.
-> Never generate code that references a deprecated model ID.**
-
-## SDKs
-
-- **Python**: `google-genai` >= `1.55.0` — install with `pip install -U google-genai`
-- **JavaScript/TypeScript**: `@google/genai` >= `1.33.0` — install with `npm install @google/genai`
+---
 
 ## Quick Start
 
@@ -212,6 +224,8 @@ for await (const chunk of stream) {
 }
 ```
 
+---
+
 ## Data Model
 
 An `Interaction` response contains `outputs` — an array of typed content blocks. Each block has a `type` field:
@@ -227,33 +241,9 @@ An `Interaction` response contains `outputs` — an array of typed content block
 - `file_search_call` / `file_search_result` — File search tool
 - `image` — Generated or input image (`data`, `mime_type`, or `uri`)
 
-**Example response (function calling):**
-```json
-{
-  "id": "v1_abc123",
-  "model": "gemini-3-flash-preview",
-  "status": "requires_action",
-  "object": "interaction",
-  "role": "model",
-  "outputs": [
-    {
-      "type": "function_call",
-      "id": "gth23981",
-      "name": "get_weather",
-      "arguments": { "location": "Boston, MA" }
-    }
-  ],
-  "usage": {
-    "total_input_tokens": 100,
-    "total_output_tokens": 25,
-    "total_thought_tokens": 0,
-    "total_tokens": 125,
-    "total_tool_use_tokens": 50
-  }
-}
-```
-
 **Status values:** `completed`, `in_progress`, `requires_action`, `failed`, `cancelled`
+
+---
 
 ## Key Differences from generateContent
 
@@ -263,6 +253,8 @@ An `Interaction` response contains `outputs` — an array of typed content block
 - No background execution → `background=True` for async tasks
 - No agent access → `agent="deep-research-pro-preview-12-2025"`
 
+---
+
 ## Important Notes
 
 - Interactions are **stored by default** (`store=true`). Paid tier retains for 55 days, free tier for 1 day.
@@ -271,9 +263,24 @@ An `Interaction` response contains `outputs` — an array of typed content block
 - **Agents require** `background=True`.
 - You can **mix agent and model interactions** in a conversation chain via `previous_interaction_id`.
 
-## How to Use the Interactions API
+---
 
-For detailed API documentation, fetch from the official docs:
+## Documentation Lookup
+
+### When MCP is Installed (Preferred)
+
+If the **`search_documentation`** tool is available, use it as your **only** documentation source:
+
+1. Call `search_documentation` with your query
+2. Read the returned documentation
+3. **Immediately generate code** — do NOT use fallback URLs
+
+> [!IMPORTANT]
+> When MCP tools are present, **never** fetch URLs manually. MCP provides up-to-date, indexed documentation that is more accurate and token-efficient than URL fetching.
+
+### When MCP is NOT Installed (Fallback Only)
+
+If no MCP documentation tools are available, fetch from the official docs:
 
 - [Interactions Full Documentation](https://ai.google.dev/gemini-api/docs/interactions.md.txt)
 - [Deep Research Full Documentation](https://ai.google.dev/gemini-api/docs/deep-research.md.txt)
@@ -281,3 +288,12 @@ For detailed API documentation, fetch from the official docs:
 - [OpenAPI Spec](https://ai.google.dev/static/api/interactions.openapi.json)
 
 These pages cover function calling, built-in tools (Google Search, code execution, URL context, file search, computer use), remote MCP, structured output, thinking configuration, working with files, multimodal understanding and generation, streaming events, and more.
+
+---
+
+## Behavior Guidelines
+
+1. **Generate code immediately** once you have the SDK syntax. Do not over-research.
+2. **Maximum 2 tool calls** for documentation lookup before generating output.
+3. **Trust the skill rules** for SDK/model names — they are always correct.
+4. **Trust MCP results** for API details — they are always up-to-date.
