@@ -17,16 +17,18 @@ description: Use this skill when writing code that calls the Gemini API for text
 - `gemini-3.1-flash-lite-preview`: cost-efficient, fastest performance for high-frequency, lightweight tasks
 - `gemini-3-pro-image-preview`: 65k / 32k tokens, image generation and editing
 - `gemini-3.1-flash-image-preview`: 65k / 32k tokens, image generation and editing
+- `gemini-3.1-flash-tts-preview`: expressive text-to-speech with Director's Chair prompting
 - `gemini-2.5-pro`: 1M tokens, complex reasoning, coding, research
 - `gemini-2.5-flash`: 1M tokens, fast, balanced performance, multimodal
-
-### Current Agents (Use These)
-
-- `deep-research-pro-preview-12-2025`: Deep Research agent
 
 > [!WARNING]
 > Models like `gemini-2.0-*`, `gemini-1.5-*` are **legacy and deprecated**. Never use them.
 > **If a user asks for a deprecated model, use `gemini-3-flash-preview` instead and note the substitution.**
+
+### Current Agents (Use These)
+
+- `deep-research-preview-04-2026`: Deep Research agent — optimized for speed and efficiency, ideal for interactive use
+- `deep-research-max-preview-04-2026`: Deep Research Max agent — maximum comprehensiveness and exhaustiveness, best for automated reporting
 
 ### Current SDKs (Use These)
 
@@ -35,8 +37,6 @@ description: Use this skill when writing code that calls the Gemini API for text
 
 > [!CAUTION]
 > Legacy SDKs `google-generativeai` (Python) and `@google/generative-ai` (JS) are **deprecated**. Never use them.
-
----
 
 ## Overview
 
@@ -47,8 +47,6 @@ The Interactions API is a unified interface for interacting with Gemini models a
 - **Tool orchestration:** Function calling, Google Search, code execution, URL context, file search, remote MCP
 - **Agents:** Access built-in agents like Gemini Deep Research
 - **Thinking:** Configurable reasoning depth with thought summaries
-
----
 
 ## Quick Start
 
@@ -126,6 +124,8 @@ console.log(interaction2.outputs[interaction2.outputs.length - 1].text);
 
 ### Deep Research Agent
 
+Use `deep-research-preview-04-2026` for fast, interactive research or `deep-research-max-preview-04-2026` for maximum exhaustiveness.
+
 #### Python
 ```python
 import time
@@ -135,7 +135,7 @@ client = genai.Client()
 
 # Start background research
 interaction = client.interactions.create(
-    agent="deep-research-pro-preview-12-2025",
+    agent="deep-research-preview-04-2026",
     input="Research the history of Google TPUs.",
     background=True
 )
@@ -160,7 +160,7 @@ const client = new GoogleGenAI({});
 
 // Start background research
 const initialInteraction = await client.interactions.create({
-    agent: "deep-research-pro-preview-12-2025",
+    agent: "deep-research-preview-04-2026",
     input: "Research the history of Google TPUs.",
     background: true,
 });
@@ -178,6 +178,16 @@ while (true) {
     await new Promise(resolve => setTimeout(resolve, 10000));
 }
 ```
+
+**Advanced Deep Research Features**
+
+Deep Research supports additional capabilities beyond basic research. See the [Deep Research documentation](https://ai.google.dev/gemini-api/docs/deep-research) for full details and code examples:
+
+- **Collaborative planning** Review and refine the agent's research plan before execution (`collaborative_planning: true` in `agent_config`)
+- **Native visualization** Generate charts and infographics inline with research reports (`visualization: "auto"` in `agent_config`)
+- **MCP integration** Connect to private data sources and specialized tools via remote MCP servers
+- **File search** Search over uploaded files and connected file stores
+- **Multimodal inputs** Ground research with PDFs, CSVs, images, audio, and video
 
 ### Streaming
 
@@ -224,7 +234,6 @@ for await (const chunk of stream) {
 }
 ```
 
----
 
 ## Data Model
 
@@ -243,7 +252,6 @@ An `Interaction` response contains `outputs` — an array of typed content block
 
 **Status values:** `completed`, `in_progress`, `requires_action`, `failed`, `cancelled`
 
----
 
 ## Key Differences from generateContent
 
@@ -251,9 +259,8 @@ An `Interaction` response contains `outputs` — an array of typed content block
 - `sendMessage()` → `interactions.create(previous_interaction_id=...)`
 - `response.text` → `interaction.outputs[-1].text`
 - No background execution → `background=True` for async tasks
-- No agent access → `agent="deep-research-pro-preview-12-2025"`
+- No agent access → `agent="deep-research-preview-04-2026"` or `agent="deep-research-max-preview-04-2026"`
 
----
 
 ## Important Notes
 
@@ -263,7 +270,6 @@ An `Interaction` response contains `outputs` — an array of typed content block
 - **Agents require** `background=True`.
 - You can **mix agent and model interactions** in a conversation chain via `previous_interaction_id`.
 
----
 
 ## Documentation Lookup
 
@@ -286,5 +292,3 @@ If no MCP documentation tools are available, fetch from the official docs:
 - [Deep Research Full Documentation](https://ai.google.dev/gemini-api/docs/deep-research.md.txt)
 
 These pages cover function calling, built-in tools (Google Search, code execution, URL context, file search, computer use), remote MCP, structured output, thinking configuration, working with files, multimodal understanding and generation, streaming events, and more.
-
-
