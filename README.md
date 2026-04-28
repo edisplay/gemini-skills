@@ -57,9 +57,9 @@ npx ctx7 skills install /google-gemini/gemini-skills
 npx ctx7 skills install /google-gemini/gemini-skills vertex-ai-api-dev
 ```
 
-## Gemini Docs MCP
+## Gemini API docs MCP
 
-Gemini hosts a public Model Context Protocol (MCP) server at
+A public Model Context Protocol (MCP) server for the Gemini API is available at
 `https://gemini-api-docs-mcp.dev`. Connecting your coding agent to this server ensures that
 all queries have access to the latest APIs, code updates, and optimal configuration examples.
 
@@ -70,11 +70,15 @@ the server:
 
 This server adds a `search_docs` function that your agent can use to
 retrieve real-time API definitions and integration patterns from the official
-Gemini documentation files.
+Gemini API documentation.
 
-## More Installation Documentation
+Note that the `gemini-api-dev` skill works with or without the MCP server, so
+we recommend installing them both.
 
-You can find additional information about setting up your coding assistant with Gemini MCP and Skills here: https://ai.google.dev/gemini-api/docs/coding-agents
+## More info
+
+You can find additional information about setting up your coding assistant with
+Gemini API MCP and Skills in [the docs](https://ai.google.dev/gemini-api/docs/coding-agents).
 
 ## Disclaimer
 
