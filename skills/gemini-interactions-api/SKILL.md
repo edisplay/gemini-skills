@@ -12,8 +12,8 @@ description: Use this skill when writing code that calls the Gemini API for text
 
 ### Current Models (Use These)
 
+- `gemini-3.5-flash`: 1M tokens, fast, balanced performance, multimodal
 - `gemini-3.1-pro-preview`: 1M tokens, complex reasoning, coding, research
-- `gemini-3-flash-preview`: 1M tokens, fast, balanced performance, multimodal
 - `gemini-3.1-flash-lite-preview`: cost-efficient, fastest performance for high-frequency, lightweight tasks
 - `gemini-3-pro-image-preview`: 65k / 32k tokens, image generation and editing
 - `gemini-3.1-flash-image-preview`: 65k / 32k tokens, image generation and editing
@@ -25,7 +25,7 @@ description: Use this skill when writing code that calls the Gemini API for text
 
 > [!WARNING]
 > Models like `gemini-2.0-*`, `gemini-1.5-*` are **legacy and deprecated**. Never use them.
-> **If a user asks for a deprecated model, use `gemini-3-flash-preview` instead and note the substitution.**
+> **If a user asks for a deprecated model, use `gemini-3.5-flash` instead and note the substitution.**
 
 ### Current Agents
 
@@ -52,6 +52,7 @@ description: Use this skill when writing code that calls the Gemini API for text
 - `tools`, `system_instruction`, and `generation_config` are **interaction-scoped**, re-specify them each turn.
 - **Migrating from `generateContent`**: Read `references/migration.md` for the scoping, checklist, and before/after code examples. Always confirm scope with the user before editing.
 - **Model upgrades**: Drop-in, swap the model string. Deprecated models (`gemini-2.0-*`, `gemini-1.5-*`) must be replaced, see `references/migration.md`.
+- **Migrating to Gemini 3.5 Flash**: Read `references/migration.md` for the scoping and checklist.
 
 ## Quick Start
 
@@ -62,7 +63,7 @@ from google import genai
 client = genai.Client()
 
 interaction = client.interactions.create(
-    model="gemini-3-flash-preview",
+    model="gemini-3.5-flash",
     input="Tell me a short joke about programming."
 )
 print(interaction.steps[-1].content[0].text)
@@ -75,7 +76,7 @@ import { GoogleGenAI } from "@google/genai";
 const client = new GoogleGenAI({});
 
 const interaction = await client.interactions.create({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.5-flash",
     input: "Tell me a short joke about programming.",
 });
 console.log(interaction.steps.at(-1).content[0].text);
@@ -86,12 +87,12 @@ console.log(interaction.steps.at(-1).content[0].text);
 ### Python
 ```python
 interaction1 = client.interactions.create(
-    model="gemini-3-flash-preview",
+    model="gemini-3.5-flash",
     input="Hi, my name is Phil."
 )
 # Second turn — server remembers context
 interaction2 = client.interactions.create(
-    model="gemini-3-flash-preview",
+    model="gemini-3.5-flash",
     input="What is my name?",
     previous_interaction_id=interaction1.id
 )
@@ -101,11 +102,11 @@ print(interaction2.steps[-1].content[0].text)
 ### JavaScript/TypeScript
 ```typescript
 const interaction1 = await client.interactions.create({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.5-flash",
     input: "Hi, my name is Phil.",
 });
 const interaction2 = await client.interactions.create({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.5-flash",
     input: "What is my name?",
     previous_interaction_id: interaction1.id,
 });
@@ -170,7 +171,7 @@ Advanced features: collaborative planning, native visualization, MCP integration
 ### Python
 ```python
 for event in client.interactions.create(
-    model="gemini-3-flash-preview",
+    model="gemini-3.5-flash",
     input="Explain quantum entanglement in simple terms.",
     stream=True,
 ):
@@ -187,7 +188,7 @@ for event in client.interactions.create(
 ### JavaScript/TypeScript
 ```typescript
 const stream = await client.interactions.create({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.5-flash",
     input: "Explain quantum entanglement in simple terms.",
     stream: true,
 });
@@ -250,6 +251,7 @@ for await (const event of stream) {
 
 **Advanced Features:**
 - [Deep Research](https://ai.google.dev/gemini-api/docs/interactions/deep-research.md.txt)
+- [Gemini 3.5 Flash](https://ai.google.dev/gemini-api/docs/interactions/whats-new-gemini-3.5-flash)
 - [Gemini 3](https://ai.google.dev/gemini-api/docs/interactions/gemini-3.md.txt)
 - [Flex Inference](https://ai.google.dev/gemini-api/docs/interactions/flex-inference.md.txt)
 - [Priority Inference](https://ai.google.dev/gemini-api/docs/interactions/priority-inference.md.txt)

@@ -18,7 +18,7 @@ Even imperative requests like "migrate my code", "upgrade to gemini 3", or "swit
 **Sizing the scope (large repos).** Before asking, get a per-directory count:
 
 ```sh
-rg -l "generate_content\|generateContent\|gemini-2\.0\|gemini-1\.5" --type-not md | cut -d/ -f1 | sort | uniq -c | sort -rn
+rg -l "generate_content\|generateContent\|gemini-2\.0\|gemini-1\.5\|gemini-2\.5\|gemini-3-flash-preview\|thinking_budget\|temperature" --type-not md | cut -d/ -f1 | sort | uniq -c | sort -rn
 ```
 
 Present the breakdown in your question (e.g. *"Found 42 references across 3 directories: src/ (28), tests/ (10), scripts/ (4). Which to migrate?"*).
@@ -50,16 +50,17 @@ For full before/after code examples, fetch the [Migration Guide](https://ai.goog
 
 | Model | Status | Drop-in Replacement |
 |-------|--------|-------------------|
-| `gemini-2.0-flash` | Deprecated | `gemini-3-flash-preview` |
+| `gemini-2.0-flash` | Deprecated | `gemini-3.5-flash` |
 | `gemini-2.0-flash-lite` | Deprecated | `gemini-3.1-flash-lite-preview` |
 | `gemini-1.5-pro` | Deprecated | `gemini-3.1-pro-preview` |
-| `gemini-1.5-flash` | Deprecated | `gemini-3-flash-preview` |
+| `gemini-1.5-flash` | Deprecated | `gemini-3.5-flash` |
 
 ### Active Legacy Models (migration recommended)
 
 | Current Model | Recommended Target | Why |
 |--------------|-------------------|-----|
-| `gemini-2.5-flash` | `gemini-3-flash-preview` | Latest Flash with Interactions API support |
+| `gemini-3-flash-preview` | `gemini-3.5-flash` | Latest Flash with Interactions API support |
+| `gemini-2.5-flash` | `gemini-3.5-flash` | Latest Flash with Interactions API support |
 | `gemini-2.5-pro` | `gemini-3.1-pro-preview` | Latest Pro with 1M context, complex reasoning |
 
 > **Note:** Within the Interactions API, model upgrades are generally drop-in — change the model string and verify. The breaking changes are at the **API level** (generateContent → Interactions), not between model generations.
@@ -89,8 +90,17 @@ Every item is tagged: **`[BLOCKS]`** items cause errors or broken behavior if mi
 
 - [ ] Replaced `gemini-2.0-*` model strings with current equivalents
 - [ ] Replaced `gemini-1.5-*` model strings with current equivalents
-- [ ] Consider upgrading `gemini-2.5-flash` → `gemini-3-flash-preview`
+- [ ] Consider upgrading `gemini-3-flash-preview` → `gemini-3.5-flash`
+- [ ] Consider upgrading `gemini-2.5-flash` → `gemini-3.5-flash`
 - [ ] Consider upgrading `gemini-2.5-pro` → `gemini-3.1-pro-preview`
+
+### Migrate to Gemini 3.5
+
+Use this checklist if the user requests to migrate to Gemini 3.5. For full documentation of the changes, fetch the [What's new Gemini 3.5 Flash guide](https://ai.google.dev/gemini-api/docs/interactions/whats-new-gemini-3.5-flash.md.txt).
+
+- [ ] Updated model name to `gemini-3.5-flash`
+- [ ] Removed `temperature`, `top_p`, `top_k` from config
+- [ ] Replaced `thinking_budget` with `thinking_level` (`minimal`, `low`, `medium`, `high`)
 
 ---
 
